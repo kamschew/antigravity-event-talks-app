@@ -10,9 +10,7 @@ let appState = {
 // DOM Elements
 const feedContainer = document.getElementById('feed-container');
 const refreshBtn = document.getElementById('refresh-btn');
-const themeToggleBtn = document.getElementById('theme-toggle');
-const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+const themeToggleCheckbox = document.getElementById('theme-toggle-checkbox');
 const lastUpdatedText = document.getElementById('last-updated-text');
 const statusDot = document.getElementById('status-dot');
 const searchInput = document.getElementById('search-input');
@@ -54,24 +52,21 @@ function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     
-    if (theme === 'dark') {
-        themeToggleDarkIcon.style.display = 'none';
-        themeToggleLightIcon.style.display = 'block';
-    } else {
-        themeToggleDarkIcon.style.display = 'block';
-        themeToggleLightIcon.style.display = 'none';
+    if (themeToggleCheckbox) {
+        themeToggleCheckbox.checked = (theme === 'light');
     }
-}
-
-function toggleTheme() {
-    const newTheme = appState.theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
 }
 
 // Event Listeners
 function setupEventListeners() {
     refreshBtn.addEventListener('click', () => fetchFeed(true));
-    themeToggleBtn.addEventListener('click', toggleTheme);
+    
+    if (themeToggleCheckbox) {
+        themeToggleCheckbox.addEventListener('change', (e) => {
+            const targetTheme = e.target.checked ? 'light' : 'dark';
+            setTheme(targetTheme);
+        });
+    }
     
     // Search filter input
     searchInput.addEventListener('input', debounce(() => {

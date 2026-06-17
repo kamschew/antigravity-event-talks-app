@@ -947,3 +947,73 @@ footer {
         padding: 1rem;
     }
 }
+
+/* --- Theme Switch Toggle UI --- */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    border: 1px solid var(--card-border);
+}
+
+[data-theme="light"] .theme-switch-wrapper {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.switch-icon {
+    font-size: 0.85rem;
+    user-select: none;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 18px;
+    position: relative;
+    width: 36px;
+    margin: 0;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: var(--text-muted);
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 0.3s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    background-color: #ffffff;
+    bottom: 2px;
+    content: "";
+    height: 14px;
+    left: 2px;
+    position: absolute;
+    transition: 0.3s;
+    width: 14px;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+input:checked + .slider {
+    background-color: var(--btn-primary);
+}
+
+[data-theme="light"] input:checked + .slider:before {
+    background-color: #ffffff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px);
+}
+
