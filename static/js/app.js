@@ -17,6 +17,7 @@ const lastUpdatedText = document.getElementById('last-updated-text');
 const statusDot = document.getElementById('status-dot');
 const searchInput = document.getElementById('search-input');
 const filterPills = document.querySelectorAll('.filter-pill');
+const exportCsvBtn = document.getElementById('export-csv-btn');
 
 // Composer DOM Elements
 const composerBadge = document.getElementById('composer-badge');
@@ -103,6 +104,11 @@ function setupEventListeners() {
     
     // Tweet Share Action
     tweetSubmitBtn.addEventListener('click', publishTweet);
+    
+    // Export CSV Action
+    if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', exportToCSV);
+    }
 }
 
 // Fetch Feed API
@@ -508,4 +514,48 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// Export to CSV helper function
+function exportToCSV() {
+    if (appState.filteredEntries.length === 0) {
+        alert('No updates found to export.');
+        return;
+    }
+    
+    const rows = [['Date', 'Type', 'Content', 'Link']];
+    
+    appState.filteredEntries.forEach(entry => {
+        entry.updates.forEach(update => {
+            rows.push([
+                entry.date,
+                update.type,
+                update.plain_text.replace(/\s+/g, ' ').trim(),
+                entry.link
+            ]);
+        });
+    });
+    
+    // Format rows into CSV string
+    const csvString = rows.map(row => 
+        row.map(value => {
+            const escaped = ('' + value).replace(/"/g, '""');
+            return `"${escaped}"`;
+        }).join(',')
+    ).join('\r\n');
+    
+    // Create Blob and trigger download
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, 'bigquery_release_notes.csv');
+    } else {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `bigquery_release_notes_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
